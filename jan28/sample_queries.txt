@@ -1,0 +1,24 @@
+1. 10 players will most career home runs
+
+    SELECT playerID, sum(HR) as careerHR
+    FROM batting
+    GROUP BY playerID
+    ORDER BY careerHR desc
+    LIMIT 11
+    
+
+2. Generate a year by year list of total home runs by the Phillies
+
+    SELECT yearID, sum(HR) as seasonHR
+    FROM batting
+    WHERE teamID = 'PHI'
+    GROUP BY yearID
+    ORDER BY yearID DESC
+
+3. List of teams in 2025 and their season home runs
+
+    SELECT teamID, sum(HR) as seasonHR
+    FROM batting
+    WHERE yearID = 2025
+    GROUP BY teamID
+    ORDER BY seasonHR DESC
