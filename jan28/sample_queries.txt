@@ -22,3 +22,62 @@
     WHERE yearID = 2025
     GROUP BY teamID
     ORDER BY seasonHR DESC
+
+4. Find the 10 players with the most home runs
+
+    SELECT playerID, sum(HR) as careerHR
+    FROM batting
+    GROUP BY playerID
+    ORDER BY careerHR DESC
+    LIMIT 10
+
+5. year by year list of home runs by the phillies
+
+    SELECT yearID, sum(HR)
+    FROM batting
+    WHERE teamID = 'PHI'
+    GROUP BY yearID
+    ORDER BY yearID desc
+
+6. list of teams in 2025 and how many home runs each team hit
+
+    SELECT teamID, sum(HR) as seasonHR
+    FROM batting
+    WHERE yearID = 2025
+    GROUP BY teamID
+    ORDER BY seasonHR desc
+    
+
+7. list of teams in 2025 that hit 200 or more total home runs
+
+    SELECT teamID, sum(HR) as seasonHR
+    FROM batting
+    WHERE yearID = 2025
+    GROUP BY teamID
+    HAVING seasonHR >= 200           ##having statement allows you to filter after you group##
+    ORDER BY seasonHR desc
+
+8. list of all players from 1976 with the team name
+
+    SELECT playerID, batting.teamID, name
+    FROM batting INNER JOIN teams
+    ON batting.teamID = teams.teamID AND batting.yearID = teams.yearID
+    WHERE batting.yearID = 1976
+
+
+9. babe ruths records, year, team name, and HR
+    
+    SELECT batting.yearID, name, batting.HR
+    FROM batting INNER JOIN teams
+    ON batting.teamID = teams.teamID AND batting.yearID = teams.yearID
+    WHERE playerID = 'ruthba01'
+    
+
+10. did anyone play for more than one team in 1976
+
+    SELECT playerID, count(*)     "count(*) counts all the records, it doesnt add anything within the records"
+    FROM batting
+    WHERE yearID = 1976
+    GROUP BY playerID
+    HAVING count(*) = 2
+    ORDER BY count(*) desc
