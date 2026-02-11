@@ -5,12 +5,11 @@ conn = sqlite3.connect("../baseball.db")
 cursor = conn.cursor()
 
 query = """
-    SELECT playerID, count(*)
+    SELECT playerID, sum(HR)
     FROM batting
-    WHERE yearID = 1976
     GROUP BY playerID
-    HAVING count(*) = 2
-    ORDER BY count(*) desc
+    ORDER BY sum(HR) DESC
+    LIMIT 10
 
 
 """
