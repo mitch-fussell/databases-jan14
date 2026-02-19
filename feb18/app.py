@@ -11,7 +11,7 @@ cursor = conn.cursor()
 #CONCAT joins the two names but needs a space in between to keep it two words
 query = """
     WITH top_hitters AS (
-    SELECT nameFirst, nameLast
+    SELECT batting.playerID, nameFirst, nameLast
     FROM batting INNER JOIN people
     ON batting.playerID = people.playerID
     WHERE teamID = 'PHI'
@@ -21,7 +21,7 @@ query = """
     )
     
     
-    SELECT CONCAT(nameFirst, ' ', nameLast)
+    SELECT CONCAT(nameFirst, ' ', nameLast), playerID
     FROM top_hitters
     ORDER BY nameLast ASC
 
@@ -30,16 +30,34 @@ cursor.execute(query)
 records = cursor.fetchall()
 conn.close()
 
-players = []
+#players = []
 
-for record in records:
-    players.append(record[0])
+# for record in records:
+#     players.append(record[0])
     
-print(players)
+def f(playerID):
+    conn = sqlite3.connect('../baseball.db')
+    cursor = conn.cursor()
+    query = """
+        SELECT CAST(yearID as text), HR
+        FROM batting
+        WHERE teamID = 'PHI' and playerID = ?
+        ORDER BY yearID
+    
+    """
+    cursor.execute(query, [playerID]) #[player] inputs each player into ? because the query is in a string
+    records = cursor.fetchall()
+    conn.close()
+    
+    df = pd.DataFrame(records, columns = ["year", "home runs"])
+    
+    return df
+
 
 
 with gr.Blocks() as iface:
-    playerbox = gr.Dropdown(players, value = None, label = "Select a Phillie") #value = None is the starting value of the app
-    
+    name_box = gr.Dropdown(records, interactive = True) #value = None is the starting value of the app
+    plot = gr.LinePlot(x = 'year', y = 'home runs')
+    name_box.change(fn = f, inputs = [name_box], outputs = [plot])
     
 iface.launch()
